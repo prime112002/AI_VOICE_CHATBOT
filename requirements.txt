@@ -1,0 +1,6 @@
+streamlit
+openai
+gtts
+audio-recorder-streamlit
+mysql-connector-python
+python-dotenv
