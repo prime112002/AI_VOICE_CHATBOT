@@ -1,18 +1,9 @@
 import openai
-import mysql.connector
 import os
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
-
-# Database configuration
-db_config = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'Satwik@123',
-    'database': 'voice_bot_db'
-}
 
 # OpenRouter API setup
 openai.api_key = os.getenv("OPENROUTER_API_KEY")
@@ -32,16 +23,7 @@ def get_answer(messages):
         return "Sorry, I encountered an error while generating a response."
 
 def log_query(user_query, response, response_time):
-    """Log user queries and responses to the MySQL database."""
-    try:
-        conn = mysql.connector.connect(**db_config)
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO queries (user_query, response, response_time) VALUES (%s, %s, %s)",
-            (user_query, response, response_time)
-        )
-        conn.commit()
-        cursor.close()
-        conn.close()
-    except Exception as e:
-        print(f"Error logging query: {e}")
+    """Simple logging to console instead of database."""
+    print(f"[LOG] User query: {user_query}")
+    print(f"[LOG] Response: {response}")
+    print(f"[LOG] Response time: {response_time:.2f} seconds")
