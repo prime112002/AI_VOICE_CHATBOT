@@ -1,21 +1,28 @@
-import openai
+from openai import OpenAI
 import os
+import time
 
-# OpenRouter API setup
-openai.api_key = os.getenv("OPENROUTER_API_KEY")
-openai.api_base = "https://openrouter.ai/api/v1"
-
-print("API key loaded:", openai.api_key is not None)  # Debug print
+# Setup OpenRouter client
+client = OpenAI(
+    api_key=os.getenv("OPENROUTER_API_KEY"),
+    base_url="https://openrouter.ai/api/v1"
+)
 
 def get_answer(messages):
     """Generate a response using OpenRouter."""
     try:
         system_prompt = {"role": "system", "content": "You are a helpful AI chatbot for customer support."}
-        response = openai.ChatCompletion.create(
+        start_time = time.time()
+        
+        response = client.chat.completions.create(
             model="mistralai/mixtral-8x7b-instruct",
             messages=[system_prompt] + messages
         )
-        return response.choices[0].message["content"]
+        
+        end_time = time.time()
+        response_text = response.choices[0].message.content
+        log_query(messages[-1]["content"], response_text, end_time - start_time)
+        return response_text
     except Exception as e:
         print(f"Error generating response: {e}")
         return "Sorry, I encountered an error while generating a response."
